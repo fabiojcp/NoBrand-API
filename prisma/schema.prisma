@@ -1,0 +1,117 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model Users {
+  id String @id @default(uuid())
+
+  name String
+
+  password String
+
+  email String @unique
+
+  phone String
+
+  isAdm Boolean
+
+  createdAt DateTime  @default(now())
+
+  updatedAt DateTime @updatedAt @default(now())
+   
+  // userAddress UserAddress?
+
+  userPhones UserPhones[]
+ 
+  userEmails UserEmails[]
+
+  sessions UserSessions[]
+
+  cart Cart[]
+
+  @@map("users")
+}
+
+model UserEmails {
+  id String @id @default(uuid())
+
+  email String
+
+  user Users @relation(fields: [UserId], references: [id], onDelete: Cascade)
+  UserId String
+
+  @@map("users_emails")
+}
+
+model UserPhones {
+  id String @id @default(uuid())
+
+  phone String
+
+  user Users @relation(fields: [UserId], references: [id], onDelete: Cascade)
+  UserId String
+
+  @@map("users_phones")
+}
+
+model UserSessions {
+  id String @id @default(uuid())
+
+  ip String?
+
+  createdAt DateTime @default(now())
+
+  user Users @relation(fields: [UserId], references: [id], onDelete: Cascade)
+  UserId String
+
+  @@map("user_sessions")
+}
+
+// model UserAddress {
+//   id String @id @default(uuid())
+
+//   country String
+
+//   city String
+
+//   state String
+
+//   zipCode String?
+
+//   number String?
+  
+//   distric String?
+  
+//   user Users @relation(fields: [UserId], references: [id], onDelete: Cascade)
+//   UserId String @unique
+
+//   @@map("user_address")
+// }
+
+model Cart {
+  id String @id @default(uuid())
+
+  productId String
+
+  title String
+
+  price String
+
+  currency_id String
+
+  permalink String
+
+  user Users @relation(fields: [UserId], references: [id], onDelete: Cascade)
+  UserId String @unique
+
+  @@map("user_cart")
+}
