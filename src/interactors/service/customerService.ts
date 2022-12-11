@@ -62,10 +62,14 @@ class CustomerService {
     });
 
     if (
-      findUser!.email == email ||
-      findUser!.name == name ||
-      findUser!.phone == phone ||
-      compareSync(password, findUser!.password)
+      findUser!.email == email &&
+      email !== undefined &&
+      findUser!.name == name &&
+      name !== undefined &&
+      findUser!.phone == phone &&
+      email !== undefined &&
+      compareSync(password, findUser!.password) &&
+      password !== undefined
     ) {
       throw new ErrorHandler("No changes", 200);
     }
