@@ -20,7 +20,7 @@ class CustomerService {
     const hashedPassword = await hash(password, 10);
 
     const customer = await prismaConnect.users.create({
-      data: { name, password, phone, email, isAdm: false },
+      data: { name, password: hashedPassword, phone, email, isAdm: false },
       include: { userEmails: true, userPhones: true },
     });
 

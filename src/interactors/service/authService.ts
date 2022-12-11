@@ -10,7 +10,7 @@ class AuthService {
     });
 
     if (!findCustomer) {
-      throw new UnauthorizedError("Invalid credentials");
+      throw new UnauthorizedError("Invalid credentials1");
     }
     
     if (!compareSync(findCustomer.password, password)) {
