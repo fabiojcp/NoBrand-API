@@ -12,13 +12,18 @@ class AuthService {
     if (!findCustomer) {
       throw new UnauthorizedError("Invalid credentials");
     }
-    
+
     if (!compareSync(password, findCustomer.password)) {
-      await prismaConnect.userSessions.create({data: {UserId : findCustomer!.id, ip, type: "login: wrong password"}});
+      await prismaConnect.userSessions.create({
+        data: {
+          UserId: findCustomer!.id,
+          ip,
+          type: "login customer: wrong password",
+        },
+      });
       throw new UnauthorizedError("Invalid credentials");
     }
 
-    
     const token = jwt.sign(
       {
         isAdm: false,
@@ -26,9 +31,11 @@ class AuthService {
       },
       process.env.SECRET_KEY as string,
       { expiresIn: "72h", subject: findCustomer.id }
-      );
-      
-    await prismaConnect.userSessions.create({data: {UserId : findCustomer.id, ip, type: "login: sucess"}});
+    );
+
+    await prismaConnect.userSessions.create({
+      data: { UserId: findCustomer.id, ip, type: "login customer: sucess" },
+    });
 
     return token;
   }
@@ -43,14 +50,26 @@ class AuthService {
     }
 
     if (!findManager.isAdm) {
+      await prismaConnect.userSessions.create({
+        data: {
+          UserId: findManager!.id,
+          ip,
+          type: "login customer: try manager login",
+        },
+      });
       throw new UnauthorizedError("Invalid credentials");
     }
 
-    if (!compareSync(findManager.password, password)) {
+    if (!compareSync(password, findManager.password)) {
+      await prismaConnect.userSessions.create({
+        data: {
+          UserId: findManager!.id,
+          ip,
+          type: "login manager: wrong password",
+        },
+      });
       throw new UnauthorizedError("Invalid credentials");
     }
-
-    await prismaConnect.userSessions.create({data: {UserId : findManager.id, ip, type : "login"}});
 
     const token = jwt.sign(
       {
@@ -61,7 +80,9 @@ class AuthService {
       { expiresIn: "72h", subject: findManager.id }
     );
 
-
+    await prismaConnect.userSessions.create({
+      data: { UserId: findManager.id, ip, type: "login" },
+    });
     return token;
   }
 }
