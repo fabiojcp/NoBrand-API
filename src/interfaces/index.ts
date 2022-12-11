@@ -3,6 +3,7 @@ export interface ICustomerCreate {
   email: string;
   phone: string;
   password: string;
+  ip: string;
 }
 
 export interface ICustomerEdit {
@@ -11,4 +12,5 @@ export interface ICustomerEdit {
   email: string;
   phone: string;
   password: string;
+  ip: string;
 }

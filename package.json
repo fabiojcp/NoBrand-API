@@ -6,7 +6,11 @@
   "author": "Fabiojcp <fabio50019@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "ts-node-dev src/server.ts"
+    "test": "NODE_ENV=test jest",
+    "build": "tsc",
+    "dev": "ts-node-dev src/server.ts",
+    "orm" : "prisma init",
+    "db": "prisma migrate dev --name init"
   },
   "devDependencies": {
     "@prisma/client": "^4.7.1",

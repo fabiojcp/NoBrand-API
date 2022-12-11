@@ -9,6 +9,14 @@ class customerBodyMiddleware {
     if (!email || !name || !phone || !password) {
       throw new BadRequestError("invalid body format");
     }
+    if (
+      typeof email !== "string" ||
+      typeof name !== "string" ||
+      typeof phone !== "string" ||
+      typeof password !== "string"
+    ) {
+      throw new BadRequestError("invalid body format");
+    }
 
     next();
   }
@@ -17,6 +25,15 @@ class customerBodyMiddleware {
     const { email, name, phone, password } = req.body;
 
     if (!email && !name && !phone && !password) {
+      throw new BadRequestError("invalid body format");
+    }
+
+    if (
+      typeof email !== "string" ||
+      typeof name !== "string" ||
+      typeof phone !== "string" ||
+      typeof password !== "string"
+    ) {
       throw new BadRequestError("invalid body format");
     }
 
@@ -30,6 +47,10 @@ class customerBodyMiddleware {
       throw new BadRequestError("invalid body format");
     }
 
+    if (typeof phone !== "string") {
+      throw new BadRequestError("invalid body format");
+    }
+
     next();
   }
 
@@ -37,6 +58,10 @@ class customerBodyMiddleware {
     const { phone_id, phone } = req.body;
 
     if (!phone || !phone_id) {
+      throw new BadRequestError("invalid body format");
+    }
+
+    if (typeof phone !== "string" || typeof phone_id !== "string") {
       throw new BadRequestError("invalid body format");
     }
 
@@ -50,6 +75,10 @@ class customerBodyMiddleware {
       throw new BadRequestError("invalid body format");
     }
 
+    if (typeof phone_id !== "string") {
+      throw new BadRequestError("invalid body format");
+    }
+
     next();
   }
 
@@ -57,6 +86,10 @@ class customerBodyMiddleware {
     const { email } = req.body;
 
     if (!email) {
+      throw new BadRequestError("invalid body format");
+    }
+
+    if (typeof email !== "string") {
       throw new BadRequestError("invalid body format");
     }
 
@@ -70,13 +103,21 @@ class customerBodyMiddleware {
       throw new BadRequestError("invalid body format");
     }
 
+    if (typeof email !== "string" || typeof email_id !== "string") {
+      throw new BadRequestError("invalid body format");
+    }
+
     next();
   }
 
   async deleteEmail(req: Request, res: Response, next: NextFunction) {
-    const { email_id, email } = req.body;
+    const { email_id } = req.body;
 
-    if (!email || !email_id) {
+    if (!email_id) {
+      throw new BadRequestError("invalid body format");
+    }
+
+    if (typeof email_id !== "string") {
       throw new BadRequestError("invalid body format");
     }
 
@@ -84,4 +125,4 @@ class customerBodyMiddleware {
   }
 }
 
-export default new customerBodyMiddleware()
+export default new customerBodyMiddleware();

@@ -7,6 +7,7 @@ import cors from "cors";
 import AdmRoutes from "./interactors/routes/admRoutes";
 import CustomerRoutes from "./interactors/routes/customerRoutes";
 import errorMiddleware from "./interactors/middleware/error";
+import LoginRoutes from "./interactors/routes/authRoutes";
 
 class App {
   server: any;
@@ -31,8 +32,9 @@ class App {
   }
 
   async routes() {
-    this.server.use(CustomerRoutes);
+    this.server.use("/customer", CustomerRoutes);
     this.server.use("/manager", AdmRoutes);
+    this.server.use("/auth", LoginRoutes)
     this.server.use(errorMiddleware);
   }
 }

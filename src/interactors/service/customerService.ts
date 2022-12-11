@@ -8,14 +8,10 @@ import {
 } from "../../utils/error";
 
 class CustomerService {
-  async create({ email, name, phone, password }: ICustomerCreate) {
+  async create({ ip, email, name, phone, password }: ICustomerCreate) {
     const findUserEmail = await prismaConnect.users.findUnique({
       where: { email },
     });
-
-    // // const find = await prismaConnect.users.findMany({})
-
-    // // return find
 
     if (findUserEmail) {
       throw new ConflitError("this email is already registered");
@@ -23,15 +19,19 @@ class CustomerService {
 
     const hashedPassword = await hash(password, 10);
 
-    // await prismaConnect.users.create({
-    //   data: { name, password, phone, email, isAdm: false },
-    //   include: { userEmails: true, userPhones: true },
-    // });
+    const customer = await prismaConnect.users.create({
+      data: { name, password, phone, email, isAdm: false },
+      include: { userEmails: true, userPhones: true },
+    });
 
-    return;
+    await prismaConnect.userSessions.create({
+      data: { UserId: customer.id, ip, type: "customer: create" },
+    });
+
+    return customer;
   }
 
-  async customerData(customer_id: string) {
+  async customerData(customer_id: string, ip: string) {
     const findUser = await prismaConnect.users.findUnique({
       where: { id: customer_id },
       include: {
@@ -41,25 +41,43 @@ class CustomerService {
       },
     });
 
+    await prismaConnect.userSessions.create({
+      data: { UserId: customer_id, ip, type: "customer: get data" },
+    });
+
     return findUser;
   }
 
-  async edit({ customer_id, email, name, phone, password }: ICustomerEdit) {
+  async edit({ customer_id, email, name, phone, password, ip }: ICustomerEdit) {
     await prismaConnect.users.update({
       where: { id: customer_id },
       data: { email, name, phone, password },
     });
+
+    await prismaConnect.userSessions.create({
+      data: { UserId: customer_id, ip, type: "customer: edit data" },
+    });
+
     return;
   }
 
-  async createPhone(customer_id: string, phone: string) {
+  async createPhone(customer_id: string, phone: string, ip: string) {
     await prismaConnect.userPhones.create({
       data: { phone, UserId: customer_id },
+    });
+
+    await prismaConnect.userSessions.create({
+      data: { UserId: customer_id, ip, type: "customer: create phone" },
     });
     return;
   }
 
-  async editPhone(customer_id: string, phone_id: string, phone: string) {
+  async editPhone(
+    customer_id: string,
+    phone_id: string,
+    phone: string,
+    ip: string
+  ) {
     const findPhoneOwner = await prismaConnect.userPhones.findUnique({
       where: { id: phone_id },
     });
@@ -76,10 +94,14 @@ class CustomerService {
       where: { id: phone_id },
       data: { phone },
     });
+
+    await prismaConnect.userSessions.create({
+      data: { UserId: customer_id, ip, type: "customer: edit phone" },
+    });
     return;
   }
-  
-  async deletePhone(customer_id: string, phone_id: string) {
+
+  async deletePhone(customer_id: string, phone_id: string, ip: string) {
     const findPhoneOwner = await prismaConnect.userPhones.findUnique({
       where: { id: phone_id },
     });
@@ -93,16 +115,32 @@ class CustomerService {
     }
 
     await prismaConnect.userPhones.delete({ where: { id: phone_id } });
-  }
 
-  async createEmail(customer_id: string, email: string) {
-    await prismaConnect.userEmails.create({
-      data: { email, UserId: customer_id },
+    await prismaConnect.userSessions.create({
+      data: { UserId: customer_id, ip, type: "customer: delete phone" },
     });
+
     return;
   }
 
-  async editEmail(customer_id: string, email_id: string, email: string) {
+  async createEmail(customer_id: string, email: string, ip: string) {
+    await prismaConnect.userEmails.create({
+      data: { email, UserId: customer_id },
+    });
+
+    await prismaConnect.userSessions.create({
+      data: { UserId: customer_id, ip, type: "customer: create email" },
+    });
+
+    return;
+  }
+
+  async editEmail(
+    customer_id: string,
+    email_id: string,
+    email: string,
+    ip: string
+  ) {
     const findEmailOwner = await prismaConnect.userEmails.findUnique({
       where: { id: email_id },
     });
@@ -119,10 +157,14 @@ class CustomerService {
       where: { id: email_id },
       data: { email },
     });
+
+    await prismaConnect.userSessions.create({
+      data: { UserId: customer_id, ip, type: "customer: edit email" },
+    });
     return;
   }
 
-  async deleteEmail(customer_id: string, email_id: string) {
+  async deleteEmail(customer_id: string, email_id: string, ip: string) {
     const findEmailOwner = await prismaConnect.userEmails.findUnique({
       where: { id: email_id },
     });
@@ -136,6 +178,12 @@ class CustomerService {
     }
 
     await prismaConnect.userEmails.delete({ where: { id: email_id } });
+
+    await prismaConnect.userSessions.create({
+      data: { UserId: customer_id, ip, type: "customer: delete email" },
+    });
+
+    return;
   }
 }
 

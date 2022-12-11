@@ -17,7 +17,7 @@ class AuthService {
       throw new UnauthorizedError("Invalid credentials");
     }
 
-    await prismaConnect.userSessions.create({data: {UserId : findCustomer.id, ip}});
+    await prismaConnect.userSessions.create({data: {UserId : findCustomer.id, ip, type: "login"}});
 
     const token = jwt.sign(
       {
@@ -48,7 +48,7 @@ class AuthService {
       throw new UnauthorizedError("Invalid credentials");
     }
 
-    await prismaConnect.userSessions.create({data: {UserId : findManager.id, ip}});
+    await prismaConnect.userSessions.create({data: {UserId : findManager.id, ip, type : "login"}});
 
     const token = jwt.sign(
       {

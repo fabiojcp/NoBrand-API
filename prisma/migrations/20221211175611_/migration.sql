@@ -34,6 +34,7 @@ CREATE TABLE "users_phones" (
 CREATE TABLE "user_sessions" (
     "id" TEXT NOT NULL,
     "ip" TEXT,
+    "type" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "UserId" TEXT NOT NULL,
 

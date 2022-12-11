@@ -1,117 +1,68 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model Users {
-  id String @id @default(uuid())
-
-  name String
-
-  password String
-
-  email String @unique
-
-  phone String
-
-  isAdm Boolean
-
-  createdAt DateTime  @default(now())
-
-  updatedAt DateTime @updatedAt @default(now())
-   
-  // userAddress UserAddress?
-
-  userPhones UserPhones[]
- 
+  id         String         @id @default(uuid())
+  name       String
+  password   String
+  email      String         @unique
+  phone      String
+  isAdm      Boolean
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @default(now()) @updatedAt
+  cart       Cart?
+  sessions   UserSessions[]
   userEmails UserEmails[]
-
-  sessions UserSessions[]
-
-  cart Cart[]
+  userPhones UserPhones[]
 
   @@map("users")
 }
 
 model UserEmails {
-  id String @id @default(uuid())
-
-  email String
-
-  user Users @relation(fields: [UserId], references: [id], onDelete: Cascade)
+  id     String @id @default(uuid())
+  email  String
   UserId String
+  user   Users  @relation(fields: [UserId], references: [id], onDelete: Cascade)
 
   @@map("users_emails")
 }
 
 model UserPhones {
-  id String @id @default(uuid())
-
-  phone String
-
-  user Users @relation(fields: [UserId], references: [id], onDelete: Cascade)
+  id     String @id @default(uuid())
+  phone  String
   UserId String
+  user   Users  @relation(fields: [UserId], references: [id], onDelete: Cascade)
 
   @@map("users_phones")
 }
 
 model UserSessions {
-  id String @id @default(uuid())
-
-  ip String?
-
+  id        String   @id @default(uuid())
+  ip        String?
+  type      String
   createdAt DateTime @default(now())
-
-  user Users @relation(fields: [UserId], references: [id], onDelete: Cascade)
-  UserId String
+  UserId    String
+  user      Users    @relation(fields: [UserId], references: [id], onDelete: Cascade)
 
   @@map("user_sessions")
 }
 
-// model UserAddress {
-//   id String @id @default(uuid())
-
-//   country String
-
-//   city String
-
-//   state String
-
-//   zipCode String?
-
-//   number String?
-  
-//   distric String?
-  
-//   user Users @relation(fields: [UserId], references: [id], onDelete: Cascade)
-//   UserId String @unique
-
-//   @@map("user_address")
-// }
-
 model Cart {
-  id String @id @default(uuid())
-
-  productId String
-
-  title String
-
-  price String
-
+  id          String @id @default(uuid())
+  productId   String
+  title       String
+  price       String
   currency_id String
-
-  permalink String
-
-  user Users @relation(fields: [UserId], references: [id], onDelete: Cascade)
-  UserId String @unique
+  permalink   String
+  UserId      String @unique
+  user        Users  @relation(fields: [UserId], references: [id], onDelete: Cascade)
 
   @@map("user_cart")
 }
