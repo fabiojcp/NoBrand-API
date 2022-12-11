@@ -29,7 +29,7 @@ CustomerRoutes.patch(
 
 // create second phone info ok
 CustomerRoutes.post(
-  "/phones/",
+  "/phone/",
   TokenMiddleware.customer,
   customerBodyMiddleware.createPhone,
   customerController.createPhone
@@ -37,7 +37,7 @@ CustomerRoutes.post(
 
 // edit phone info ok
 CustomerRoutes.patch(
-  "/phones/",
+  "/phone/",
   TokenMiddleware.customer,
   customerBodyMiddleware.editPhone,
   customerController.editPhone
@@ -45,7 +45,7 @@ CustomerRoutes.patch(
 
 //delete phone info
 CustomerRoutes.delete(
-  "/phones/",
+  "/phone/",
   TokenMiddleware.customer,
   customerBodyMiddleware.deletePhone,
   customerController.deletePhone

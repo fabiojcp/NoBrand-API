@@ -123,6 +123,10 @@ class CustomerService {
       throw new UnauthorizedError("unhathorized");
     }
 
+    if (findPhoneOwner.phone === phone) {
+      throw new ErrorHandler("No changes", 200);
+    }
+
     await prismaConnect.userPhones.update({
       where: { id: phone_id },
       data: { phone },
