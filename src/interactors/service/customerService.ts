@@ -1,11 +1,14 @@
 import prismaConnect from "../../utils/dataBaseClient";
-import { hash } from "bcryptjs";
+import { compareSync, hash } from "bcryptjs";
 import { ICustomerCreate, ICustomerEdit } from "../../interfaces";
 import {
   BadRequestError,
   ConflitError,
+  ErrorHandler,
   UnauthorizedError,
 } from "../../utils/error";
+import { response } from "express";
+import errorMiddleware from "../middleware/error";
 
 class CustomerService {
   async create({ ip, email, name, phone, password }: ICustomerCreate) {
@@ -49,9 +52,35 @@ class CustomerService {
   }
 
   async edit({ customer_id, email, name, phone, password, ip }: ICustomerEdit) {
+    const findUser = await prismaConnect.users.findUnique({
+      where: { id: customer_id },
+      include: {
+        cart: true,
+        userEmails: true,
+        userPhones: true,
+      },
+    });
+
+    if (
+      findUser!.email == email ||
+      findUser!.name == name ||
+      findUser!.phone == phone ||
+      compareSync(password, findUser!.password)
+    ) {
+      throw new ErrorHandler("No changes", 200);
+    }
+
+    const hashedPassword =
+      password === undefined ? findUser!.password : await hash(password, 10);
+
     await prismaConnect.users.update({
       where: { id: customer_id },
-      data: { email, name, phone, password },
+      data: {
+        email,
+        name,
+        phone,
+        password: hashedPassword,
+      },
     });
 
     await prismaConnect.userSessions.create({

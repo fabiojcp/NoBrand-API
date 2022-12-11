@@ -7,6 +7,12 @@ export class RequestErrors extends Error {
   }
 }
 
+export class ErrorHandler extends RequestErrors {
+  constructor(message: string, status: number) {
+    super(message, status)
+  }
+}
+
 export class BadRequestError extends RequestErrors {
   constructor(message: string) {
     super(message, 400);

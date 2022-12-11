@@ -29,10 +29,10 @@ class customerBodyMiddleware {
     }
 
     if (
-      typeof email !== "string" ||
-      typeof name !== "string" ||
-      typeof phone !== "string" ||
-      typeof password !== "string"
+      (typeof email !== "string" && email) ||
+      (typeof name !== "string" && name) ||
+      (typeof phone !== "string" && phone) ||
+      (typeof password !== "string" && password)
     ) {
       throw new BadRequestError("invalid body format");
     }
