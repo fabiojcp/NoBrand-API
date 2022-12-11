@@ -10,23 +10,25 @@ class AuthService {
     });
 
     if (!findCustomer) {
-      throw new UnauthorizedError("Invalid credentials1");
+      throw new UnauthorizedError("Invalid credentials");
     }
     
-    if (!compareSync(findCustomer.password, password)) {
+    if (!compareSync(password, findCustomer.password)) {
+      await prismaConnect.userSessions.create({data: {UserId : findCustomer!.id, ip, type: "login: wrong password"}});
       throw new UnauthorizedError("Invalid credentials");
     }
 
-    await prismaConnect.userSessions.create({data: {UserId : findCustomer.id, ip, type: "login"}});
-
+    
     const token = jwt.sign(
       {
-        isAdm: findCustomer.isAdm,
+        isAdm: false,
         id: findCustomer.id,
       },
       process.env.SECRET_KEY as string,
       { expiresIn: "72h", subject: findCustomer.id }
-    );
+      );
+      
+    await prismaConnect.userSessions.create({data: {UserId : findCustomer.id, ip, type: "login: sucess"}});
 
     return token;
   }
@@ -52,7 +54,7 @@ class AuthService {
 
     const token = jwt.sign(
       {
-        isAdm: findManager.isAdm,
+        isAdm: true,
         id: findManager.id,
       },
       process.env.SECRET_KEY as string,
