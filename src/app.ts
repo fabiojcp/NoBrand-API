@@ -33,7 +33,7 @@ class App {
 
   async routes() {
     this.server.use("/customer", CustomerRoutes);
-    this.server.use("/manager", AdmRoutes);
+    this.server.use("/management", AdmRoutes);
     this.server.use("/auth", LoginRoutes)
     this.server.use(errorMiddleware);
   }

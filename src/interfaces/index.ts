@@ -14,3 +14,12 @@ export interface ICustomerEdit {
   password: string;
   ip: string;
 }
+
+export interface IManagerCreate {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  ip: string;
+  secretKey: string
+}

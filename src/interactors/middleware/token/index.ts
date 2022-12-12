@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import { BadRequestError, UnauthorizedError } from "../../../utils/error";
 
 class TokenMiddleware {
-  async customer (req: Request, res: Response, next: NextFunction) {
+  async customer(req: Request, res: Response, next: NextFunction) {
     let token = req.headers.authorization;
 
     if (!token) {
@@ -49,11 +49,6 @@ class TokenMiddleware {
         if (error) {
           throw new UnauthorizedError("Invalid Token");
         }
-
-        if (!decoded.isAdm) {
-          throw new UnauthorizedError("Invalid credentials");
-        }
-
         req.user = {
           id: decoded.sub,
           isAdm: decoded.isAdm,
