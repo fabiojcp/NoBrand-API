@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
 import { ICustomerCreate } from "../../interfaces";
+import authService from "../service/authService";
 import CustomerService from "../service/customerService";
+import authController from "./authController";
 
 class CustomerController {
-  async create (req: Request, res: Response) {
+  async create(req: Request, res: Response) {
     const { email, name, phone, password }: ICustomerCreate = req.body;
     const ip = req.ip;
 
@@ -15,11 +17,13 @@ class CustomerController {
       password,
     });
 
-    return res.status(201).json({customer});
+    const token = await authService.customer(email, password, ip);
+
+    return res.status(201).json({ user: customer, accessToken: token });
   }
 
   async customerData(req: Request, res: Response) {
-    const customer_id : string = req.user.id;
+    const customer_id: string = req.user.id;
     const ip = req.ip;
 
     const customer = await CustomerService.customerData(customer_id, ip);
@@ -32,7 +36,14 @@ class CustomerController {
     const { email, name, phone, password } = req.body;
     const ip = req.ip;
 
-    await CustomerService.edit({ ip, customer_id, email, name, phone, password });
+    await CustomerService.edit({
+      ip,
+      customer_id,
+      email,
+      name,
+      phone,
+      password,
+    });
 
     return res.status(204).json();
   }
@@ -54,7 +65,7 @@ class CustomerController {
 
     await CustomerService.editPhone(customer_id, phone_id, phone, ip);
 
-    return res.json({message: "phone updated successfully"});
+    return res.json({ message: "phone updated successfully" });
   }
 
   async deletePhone(req: Request, res: Response) {
@@ -72,7 +83,7 @@ class CustomerController {
     const { email } = req.body;
     const ip = req.ip;
 
-    await CustomerService.createEmail(customer_id, email,ip);
+    await CustomerService.createEmail(customer_id, email, ip);
 
     return res.status(201).json({ message: "email created" });
   }
@@ -84,7 +95,7 @@ class CustomerController {
 
     await CustomerService.editEmail(customer_id, email_id, email, ip);
 
-    return res.json({message: "email updated successfully"});
+    return res.json({ message: "email updated successfully" });
   }
 
   async deleteEmail(req: Request, res: Response) {
