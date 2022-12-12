@@ -52,7 +52,7 @@ CustomerRoutes.delete(
 );
 
 // create email info
-CustomerRoutes.patch(
+CustomerRoutes.post(
   "/email/",
   TokenMiddleware.customer,
   customerBodyMiddleware.createEmail,

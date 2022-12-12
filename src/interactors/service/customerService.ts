@@ -190,6 +190,10 @@ class CustomerService {
       throw new UnauthorizedError("unhathorized");
     }
 
+    if (findEmailOwner.email === email) {
+      throw new ErrorHandler("No changes", 200);
+    }
+
     await prismaConnect.userEmails.update({
       where: { id: email_id },
       data: { email },
