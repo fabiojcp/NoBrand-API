@@ -13,22 +13,19 @@ class CustomerService {
       where: { email },
     });
 
-    // // const find = await prismaConnect.users.findMany({})
-
-    // // return find
-
     if (findUserEmail) {
       throw new ConflitError("this email is already registered");
     }
+    
+    const hashedPassword = await hash(password.toString(), 10);
 
-    const hashedPassword = await hash(password, 10);
 
-    // await prismaConnect.users.create({
-    //   data: { name, password, phone, email, isAdm: false },
-    //   include: { userEmails: true, userPhones: true },
-    // });
+    const customer = await prismaConnect.users.create({
+      data: { name, password, phone : phone.toString(), email, isAdm: false },
+      include: { userEmails: true, userPhones: true },
+    });
 
-    return;
+    return customer;
   }
 
   async customerData(customer_id: string) {
