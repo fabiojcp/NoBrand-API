@@ -28,3 +28,5 @@
     2) Criar Data Base:<br>
         `yarn db`<br>
         `npm db`
+3) Importando as requisições no insominia:<br><br>
+   Importe o arquivo `Insomnia-All_2022-12-12.json` para seu programa e verificar as configurações
